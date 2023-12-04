@@ -2,12 +2,20 @@
 " ******  基本配置  ************
 " ******************************
 "
+"设置vim剪贴板等同于系统剪贴板
+" set clipboard=unnamedplus
+"设置vim剪贴板等于系统剪贴板
+" set clipboard = unnamedplus
+"
 " 在图形界面下，自动切换输入法
 " set noimdisable
 "
 " 启用行号和相对行号
 set number
 set relativenumber
+
+" 设置显示光标位置
+set ruler
 
 " 高亮显示当前行
 set cursorline
@@ -62,9 +70,8 @@ set laststatus=2
 " 启用文件类型检测
 " filetype plugin indent on
 
-
-
-
+" 光标在屏幕上最少保留3行
+set scrolloff=3
 
 
 
@@ -88,7 +95,6 @@ nnoremap <Leader>sv :source ~/.vimrc<CR>
 
 
 
-
 " ******************************
 " ******  插件配置  ************
 " ******************************
@@ -97,6 +103,9 @@ call plug#begin()
 Plug 'ybian/smartim'
 Plug 'neoclide/coc.nvim'
 Plug 'tpope/vim-surround'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'honza/vim-snippets'
+Plug 'preservim/nerdcommenter'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 call plug#end() 
 
@@ -106,3 +115,31 @@ call plug#end()
 " let g:smartim_default='com.apple.keylayout.US'
 
 
+" 激活 NERD Commenter 插件
+let g:NERDCreateDefaultMappings = 1
+" 注释的时候自动加个空格, 强迫症必配
+let g:NERDSpaceDelims=1
+
+
+
+
+
+
+
+" 设置 coc-snippets 快捷键
+" Use <C-l> for trigger snippet expand.
+imap <C-l> <Plug>(coc-snippets-expand)
+" Use <C-j> for select text for visual placeholder of snippet.
+vmap <C-j> <Plug>(coc-snippets-select)
+" Use <C-j> for jump to next placeholder, it's default of coc.nvim
+let g:coc_snippet_next = '<c-j>'
+" Use <C-k> for jump to previous placeholder, it's default of coc.nvim
+let g:coc_snippet_prev = '<c-k>'
+" Use <C-j> for both expand and jump (make expand higher priority.)
+imap <C-j> <Plug>(coc-snippets-expand-jump)
+" Use <leader>x for convert visual selected code to snippet
+xmap <leader>x  <Plug>(coc-convert-snippet)
+
+
+" 设置正定义css样式
+let g:mkdp_markdown_css = '/Users/jinfeng/.vim/plugged/markdown-preview.nvim/css/normal.css'
