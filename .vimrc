@@ -2,17 +2,20 @@
 " ******  基本配置  ************
 " ******************************
 "
-"设置vim剪贴板等同于系统剪贴板
-" set clipboard=unnamedplus
 "设置vim剪贴板等于系统剪贴板
-" set clipboard = unnamedplus
+set clipboard=unnamed
 "
+" 设置自动换行
+set textwidth=80
+
 " 在图形界面下，自动切换输入法
 " set noimdisable
 "
 " 启用行号和相对行号
 set number
 set relativenumber
+" 设置行号宽度,注意是行号
+set numberwidth=5
 
 " 设置显示光标位置
 set ruler
@@ -37,6 +40,10 @@ syntax enable
 
 " 设置配色方案（可根据个人喜好更改）
 " colorscheme desert
+" 忽略大小写
+set ic
+" 设置列宽为80时有一个标记
+set colorcolumn=80
 
 "v启用自动缩进
 set autoindent
@@ -85,6 +92,29 @@ let mapleader = "\<Space>"
 " 设置打开vimrc和更新vimrc快捷键
 nnoremap <Leader>ev :e ~/.vimrc<CR>
 nnoremap <Leader>sv :source ~/.vimrc<CR>
+nnoremap <Leader>p :Prettier<CR>
+nnoremap <Leader><ESC> :nohl<CR>       " 取消高亮
+nnoremap <Leader><Space> :
+cnoreabbrev q q!
+
+" inoremap <Leader><Space> <ESC>
+nnoremap <leader>n :NERDTreeFocus<CR>
+" 设置复制粘贴选项。
+" 1、保留vim正常的复制粘贴
+" 2、从vim复制到系统是leader+y, 单行复制和v选中之后复制都可以
+" 3、从系统到vim是插入模式下的M+v
+"nnoremap <Leader>y :let @+ = getline('.')<CR>
+"vnoremap <Leader>y "+y
+
+" 回车时取消高亮
+nnoremap <CR> :noh<CR><CR>
+
+" 设置tb等于tabnew
+" command! -nargs=* Tb tabnew <args>
+nnoremap tb :tabnew<CR>
+
+
+
 
 
 
@@ -102,16 +132,21 @@ nnoremap <Leader>sv :source ~/.vimrc<CR>
 call plug#begin()
 Plug 'ybian/smartim'
 Plug 'neoclide/coc.nvim'
-Plug 'tpope/vim-surround'
+" Plug 'tpope/vim-surround'
+Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
+Plug 'preservim/nerdtree'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'honza/vim-snippets'
-Plug 'preservim/nerdcommenter'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+" post install (yarn install | npm install) then load plugin only for editing supported files
+Plug 'prettier/vim-prettier', {
+            \ 'do': 'yarn install --frozen-lockfile --production',
+            \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html'] }
 call plug#end() 
 
 
 " 设置smartim 在返回normal模式时，切换输入法
- let g:smartim_default='com.apple.keylayout.ABC'
+let g:smartim_default='com.apple.keylayout.ABC'
 " let g:smartim_default='com.apple.keylayout.US'
 
 
@@ -142,4 +177,41 @@ xmap <leader>x  <Plug>(coc-convert-snippet)
 
 
 " 设置正定义css样式
-let g:mkdp_markdown_css = '/Users/jinfeng/.vim/plugged/markdown-preview.nvim/css/normal.css'
+let g:mkdp_markdown_css = '/Users/jinfeng/.vim/plugged/markdown-preview.nvim/css/wbm.css'
+
+
+
+
+" ******************************
+" ******  一键运行  ************
+" ******************************
+map <F5> :call CompileRunGcc()<CR>
+func! CompileRunGcc()
+    exec "w"
+    if &filetype == 'c'
+        exec "!g++ % -o %<"
+        exec "!time ./%<"
+    elseif &filetype == 'cpp'
+        exec "!g++ % -o %<"
+        exec "!time ./%<"
+    elseif &filetype == 'java'
+        exec "!javac %"
+        exec "!time java %<"
+    elseif &filetype == 'sh'
+        :!time bash %
+    elseif &filetype == 'python'
+        exec "!time python3 %"
+    elseif &filetype == 'html'
+        " exec "!safari % &"
+         exec "!open -a Safari % &"
+    elseif &filetype == 'go'
+        "exec "!go build %<"
+        exec "!time go run %"
+    elseif &filetype == 'mkd'
+        exec "!start microsoft-edge:% &"
+        " exec "!~/.vim/markdown.pl % > %.html &"
+        " exec "!start microsoft-edge:% &"
+        exec "!open -a Safari % &"
+    endif
+endfunc
+
